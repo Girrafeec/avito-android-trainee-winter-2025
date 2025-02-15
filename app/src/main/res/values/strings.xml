@@ -1,3 +1,8 @@
 <resources>
-    <string name="app_name">avito-deezer</string>
+    <string name="app_name">Avito Deezer</string>
+
+    <!-- Tracks Screen -->
+    <string name="screen_tracks_search_field_placeholder">Type to search tracks</string>
+    <string name="screen_tracks_chart_title">Popular today</string>
+    <string name="screen_tracks_no_tracks_found_message">No track found</string>
 </resources>

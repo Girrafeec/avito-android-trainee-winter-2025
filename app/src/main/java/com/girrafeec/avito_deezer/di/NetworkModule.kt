@@ -1,8 +1,11 @@
 package com.girrafeec.avito_deezer.di
 
 import com.girrafeec.avito_deezer.BuildConfig
+import com.girrafeec.avito_deezer.data.network.DeezerApi
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -14,6 +17,7 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 @Module
+@InstallIn(SingletonComponent::class)
 class NetworkModule {
 
     @Provides
@@ -56,5 +60,11 @@ class NetworkModule {
             .addConverterFactory(jsonConverterFactory)
             .client(client)
             .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideDeezerApi(retrofit: Retrofit): DeezerApi {
+        return retrofit.create(DeezerApi::class.java)
     }
 }

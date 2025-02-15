@@ -7,4 +7,5 @@ plugins {
     alias(libs.plugins.kapt) apply false
     alias(libs.plugins.kotlin.serialization) apply false
     alias(libs.plugins.android.git.version) apply false
+    alias(libs.plugins.dagger.hilt) apply false
 }
