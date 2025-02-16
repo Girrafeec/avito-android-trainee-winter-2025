@@ -1,9 +1,9 @@
 # Тестовое задание для стажёра Android-направления (зимняя волна 2025)
 
 ## Как запустить
-Для запуска приложения необходимо скачать .apk файл из [последнего релиза](https://github.com/Girrafeec/avito-android-trainee-winter-2025/releases/tag/0.2.0)
-Приложение тестировалось на Pixel 5 API 33
-Проект собирался в Android Studio Ladybug Feature Drop | 2024.2.2 Patch 1
+- Для запуска приложения необходимо скачать .apk файл из [последнего релиза](https://github.com/Girrafeec/avito-android-trainee-winter-2025/releases/tag/0.2.0).
+- Приложение тестировалось на Pixel 5 API 33.
+- Проект собирался в Android Studio Ladybug Feature Drop | 2024.2.2 Patch 1
 
 ## Что сделано
 - Экраны с онлайн и локальной музыкой со списком и всеми требуемыми данными
