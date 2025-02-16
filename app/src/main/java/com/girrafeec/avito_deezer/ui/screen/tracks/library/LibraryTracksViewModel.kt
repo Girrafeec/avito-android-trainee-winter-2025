@@ -1,5 +1,9 @@
 package com.girrafeec.avito_deezer.ui.screen.tracks.library
 
+import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.girrafeec.avito_deezer.domain.Track
@@ -7,6 +11,7 @@ import com.girrafeec.avito_deezer.ui.screen.tracks.common.BaseTracksViewModel
 import com.girrafeec.avito_deezer.ui.screen.tracks.common.BaseTracksViewModel.SideEffect.ShowPlayer
 import com.girrafeec.avito_deezer.usecase.library.SearchLibraryTracksUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
@@ -24,10 +29,13 @@ import kotlinx.coroutines.plus
 import timber.log.Timber
 import javax.inject.Inject
 
+// TODO: [High] Check permission via PermissionManager
 @HiltViewModel
 class LibraryTracksViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val interactor: LibraryTracksInteractor,
+    @ApplicationContext
+    private val context: Context,
 ) : BaseTracksViewModel() {
 
     val searchQuery: StateFlow<String> = savedStateHandle.getStateFlow(key = KEY_SEARCH_QUERY, initialValue = "")
@@ -48,14 +56,16 @@ class LibraryTracksViewModel @Inject constructor(
     private var searchTracksJob: Job? = null
 
     init {
-        loadTracks()
         observeLibraryTracks()
         observeSearchQuery()
     }
 
-    // TODO: [High] Implement Side Effects for it
     override fun onScreenOpened() {
-        loadTracks()
+        if (isMediaAudioPermissionGranted()) {
+            loadTracks()
+        } else {
+            emitSideEffect(SideEffect.ShowMediaAudioPermission)
+        }
     }
 
     // TODO: [Medium priority] Add some validation
@@ -113,6 +123,11 @@ class LibraryTracksViewModel @Inject constructor(
                 _tracks.value = it
             }
             .launchIn(viewModelScope + Dispatchers.Default)
+    }
+
+    private fun isMediaAudioPermissionGranted(): Boolean {
+        return ContextCompat.checkSelfPermission(context, Manifest.permission.READ_MEDIA_AUDIO) ==
+                PackageManager.PERMISSION_GRANTED
     }
 
     companion object {

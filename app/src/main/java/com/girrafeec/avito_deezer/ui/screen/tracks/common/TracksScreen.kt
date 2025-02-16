@@ -24,24 +24,30 @@ import com.girrafeec.avito_deezer.ui.screen.tracks.common.TracksScreenComponents
 import com.girrafeec.avito_deezer.ui.screen.tracks.common.TracksScreenComponents.TracksSearchField
 import com.girrafeec.avito_deezer.ui.theme.AvitoDeezerTheme
 import com.girrafeec.avito_deezer.ui.theme.UiKitTheme
+import com.girrafeec.avito_deezer.util.NoopPermissionState
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.PermissionState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlin.time.Duration.Companion.seconds
 
 // TODO: [High] Rename isLocal param
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun TracksScreen(
     searchQuery: String,
     tracks: List<Track>,
     sideEffects: Flow<SideEffect>,
+    mediaAudioPermissionState: PermissionState,
     onEvent: (Event) -> Unit,
     onShowPlayer: (Track) -> Unit,
-    isLocal: Boolean = true,
+    isLocal: Boolean = false,
 ) {
     TracksScreenContent(
         searchQuery = searchQuery,
         tracks = tracks,
         sideEffects = sideEffects,
+        mediaAudioPermissionState = mediaAudioPermissionState,
         onShowPlayer = onShowPlayer,
         onEvent = onEvent,
         isLocal = isLocal,
@@ -49,11 +55,13 @@ fun TracksScreen(
 }
 
 // TODO: [Medium priority] Show no tracks placeholder
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 private fun TracksScreenContent(
     searchQuery: String,
     tracks: List<Track>,
     sideEffects: Flow<SideEffect>,
+    mediaAudioPermissionState: PermissionState,
     onShowPlayer: (Track) -> Unit,
     onEvent: (Event) -> Unit,
     isLocal: Boolean
@@ -61,6 +69,7 @@ private fun TracksScreenContent(
     TrackScreenBehavior(
         sideEffects = sideEffects,
         onEvent = onEvent,
+        mediaAudioPermissionState = mediaAudioPermissionState,
         onShowPlayer = onShowPlayer,
     )
 
@@ -74,9 +83,13 @@ private fun TracksScreenContent(
             onSearchInputChanged = { onEvent(OnSearchQueryEntered(it)) },
         )
         Spacer(modifier = Modifier.height(16.dp))
-        // TODO: [High] Show text on boolean flag
+        val stringResId = if (isLocal) {
+            R.string.screen_tracks_library_title
+        } else {
+            R.string.screen_tracks_chart_title
+        }
         Text(
-            text = stringResource(R.string.screen_tracks_chart_title),
+            text = stringResource(stringResId),
             style = UiKitTheme.typography.heading.xl,
             color = UiKitTheme.colors.text.primary
         )
@@ -88,6 +101,7 @@ private fun TracksScreenContent(
     }
 }
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 @Preview
 private fun TracksScreenPreview() {
@@ -98,11 +112,13 @@ private fun TracksScreenPreview() {
             sideEffects = emptyFlow(),
             onEvent = {},
             onShowPlayer = {},
-            isLocal = true
+            isLocal = false,
+            mediaAudioPermissionState = NoopPermissionState(),
         )
     }
 }
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 @Preview
 private fun TracksScreenQueryPreview() {
@@ -113,11 +129,13 @@ private fun TracksScreenQueryPreview() {
             sideEffects = emptyFlow(),
             onEvent = {},
             onShowPlayer = {},
-            isLocal = true
+            isLocal = false,
+            mediaAudioPermissionState = NoopPermissionState(),
         )
     }
 }
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 @Preview
 private fun TracksScreenTrackListPreview() {
@@ -165,7 +183,8 @@ private fun TracksScreenTrackListPreview() {
             sideEffects = emptyFlow(),
             onEvent = {},
             onShowPlayer = {},
-            isLocal = true
+            isLocal = false,
+            mediaAudioPermissionState = NoopPermissionState(),
         )
     }
 }

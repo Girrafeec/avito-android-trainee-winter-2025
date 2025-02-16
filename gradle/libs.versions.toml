@@ -58,6 +58,7 @@ androidx-media3-exoplayer = { module = "androidx.media3:media3-exoplayer", versi
 androidx-media3-session = { module = "androidx.media3:media3-session", version.ref = "media3-exoplayer" }
 androidx-media3-ui = { module = "androidx.media3:media3-ui", version.ref = "media3-exoplayer" }
 androidx-legacy-support-v4 = { module = "androidx.legacy:legacy-support-v4", version = "1.0.0" }
+accompanist-permisisons = { module = "com.google.accompanist:accompanist-permissions", version = "0.32.0" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

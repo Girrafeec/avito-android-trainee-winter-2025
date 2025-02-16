@@ -10,7 +10,6 @@ import com.girrafeec.avito_deezer.domain.Artist
 import com.girrafeec.avito_deezer.domain.Track
 import com.girrafeec.avito_deezer.domain.TrackSource
 import dagger.hilt.android.qualifiers.ApplicationContext
-import timber.log.Timber
 import javax.inject.Inject
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration

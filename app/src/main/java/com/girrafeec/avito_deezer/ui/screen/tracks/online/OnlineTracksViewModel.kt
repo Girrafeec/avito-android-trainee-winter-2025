@@ -48,12 +48,10 @@ class OnlineTracksViewModel @Inject constructor(
     private var searchTracksJob: Job? = null
 
     init {
-        loadTracks()
         observeOnlineTracks()
         observeSearchQuery()
     }
 
-    // TODO: [High] Implement Side Effects for it
     override fun onScreenOpened() {
         loadTracks()
     }

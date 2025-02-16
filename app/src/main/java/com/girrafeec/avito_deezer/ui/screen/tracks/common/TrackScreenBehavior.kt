@@ -9,12 +9,17 @@ import com.girrafeec.avito_deezer.ui.bottombar.ForcedBottomBarBehavior
 import com.girrafeec.avito_deezer.ui.screen.tracks.common.BaseTracksViewModel.Event
 import com.girrafeec.avito_deezer.ui.screen.tracks.common.BaseTracksViewModel.Event.ScreenOpened
 import com.girrafeec.avito_deezer.ui.screen.tracks.common.BaseTracksViewModel.SideEffect
+import com.girrafeec.avito_deezer.ui.screen.tracks.common.BaseTracksViewModel.SideEffect.ShowMediaAudioPermission
 import com.girrafeec.avito_deezer.ui.screen.tracks.common.BaseTracksViewModel.SideEffect.ShowPlayer
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.PermissionState
 import kotlinx.coroutines.flow.Flow
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun TrackScreenBehavior(
     sideEffects: Flow<SideEffect>,
+    mediaAudioPermissionState: PermissionState,
     onEvent: (Event) -> Unit,
     onShowPlayer: (Track) -> Unit,
 ) {
@@ -31,6 +36,7 @@ fun TrackScreenBehavior(
         sideEffects.collect { sideEffect ->
             when (sideEffect) {
                 is ShowPlayer -> onShowPlayer(sideEffect.track)
+                ShowMediaAudioPermission -> mediaAudioPermissionState.launchPermissionRequest()
             }
         }
     }

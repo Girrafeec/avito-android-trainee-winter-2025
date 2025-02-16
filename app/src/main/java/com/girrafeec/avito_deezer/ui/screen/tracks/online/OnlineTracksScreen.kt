@@ -11,6 +11,8 @@ import com.girrafeec.avito_deezer.ui.screen.tracks.common.BaseTracksViewModel.Ev
 import com.girrafeec.avito_deezer.ui.screen.tracks.common.BaseTracksViewModel.SideEffect
 import com.girrafeec.avito_deezer.ui.screen.tracks.common.TracksScreen
 import com.girrafeec.avito_deezer.ui.theme.AvitoDeezerTheme
+import com.girrafeec.avito_deezer.util.NoopPermissionState
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 
@@ -31,6 +33,7 @@ fun OnlineTracksScreen(
     )
 }
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 private fun OnlineTracksScreenContent(
     searchQuery: String,
@@ -40,6 +43,7 @@ private fun OnlineTracksScreenContent(
     onShowPlayer: (Track) -> Unit,
 ) {
     TracksScreen(
+        mediaAudioPermissionState = NoopPermissionState(),
         searchQuery = searchQuery,
         tracks = tracks,
         sideEffects = sideEffects,

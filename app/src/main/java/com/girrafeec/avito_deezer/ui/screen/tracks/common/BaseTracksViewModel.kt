@@ -36,5 +36,6 @@ abstract class BaseTracksViewModel
 
     sealed interface SideEffect {
         data class ShowPlayer(val track: Track) : SideEffect
+        data object ShowMediaAudioPermission : SideEffect
     }
 }
