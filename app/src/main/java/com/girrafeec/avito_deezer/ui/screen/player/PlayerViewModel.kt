@@ -36,7 +36,7 @@ class PlayerViewModel @Inject constructor(
     private val interactor: PlayerInteractor,
 ) : ViewModel(), SideEffectManager<SideEffect> by SideEffectManagerImpl() {
 
-    private val trackId: Long? = getTrackId()
+    private var trackId: Long? = getTrackId()
     private val trackSource: TrackSource = getTrackSource()
 
     private var currentTrackList: List<Track> = emptyList()
@@ -69,11 +69,23 @@ class PlayerViewModel @Inject constructor(
     }
 
     private fun onJumpToNextTrackClicked() {
-
+        val currentTrackIndex = currentTrackList.indexOfFirst { it.id == trackId }
+        if (currentTrackIndex != -1 && currentTrackIndex < currentTrackList.size - 1) {
+            val track = currentTrackList[currentTrackIndex + 1]
+            _trackFlow.value = track
+            trackId = track.id
+            playTrack(track)
+        }
     }
 
     private fun onJumpToPrevTrackClicked() {
-
+        val currentTrackIndex = currentTrackList.indexOfFirst { it.id == trackId }
+        if (currentTrackIndex != -1 && currentTrackIndex > 0) {
+            val track = currentTrackList[currentTrackIndex - 1]
+            _trackFlow.value = track
+            trackId = track.id
+            playTrack(track)
+        }
     }
 
     private fun onPlaybackSeek(progress: Float) {
@@ -100,17 +112,20 @@ class PlayerViewModel @Inject constructor(
         trackFlow
             .filterNotNull()
             .onEach { track ->
-                // TODO: [High] Move to separate method
-                val mediaSource = MediaSource(
-                    uri = track.trackUri ?: track.trackUrl ?: error("track uri is null"),
-                    source = trackSource
-                )
-                interactor.setMediaSource(mediaSource)
-                interactor.preparePlayer()
-                interactor.play()
+                playTrack(track)
                 emitSideEffect(LaunchBackgroundPlayback)
             }
             .launchIn(viewModelScope + Dispatchers.Default)
+    }
+
+    private fun playTrack(track: Track) {
+        val mediaSource = MediaSource(
+            uri = track.trackUri ?: track.trackUrl ?: error("track uri is null"),
+            source = trackSource
+        )
+        interactor.setMediaSource(mediaSource)
+        interactor.preparePlayer()
+        interactor.play()
     }
 
     private fun getTrackId(): Long? {
