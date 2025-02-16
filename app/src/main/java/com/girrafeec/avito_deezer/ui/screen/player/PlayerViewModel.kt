@@ -1,8 +1,11 @@
 package com.girrafeec.avito_deezer.ui.screen.player
 
+import android.view.WindowInsets.Side
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.girrafeec.avito_deezer.base.SideEffectManager
+import com.girrafeec.avito_deezer.base.SideEffectManagerImpl
 import com.girrafeec.avito_deezer.domain.Track
 import com.girrafeec.avito_deezer.domain.TrackSource
 import com.girrafeec.avito_deezer.ui.navigation.Destinations.PlayerDestination.KeyTrackId
@@ -12,6 +15,7 @@ import com.girrafeec.avito_deezer.ui.screen.player.PlayerViewModel.Event.JumpToN
 import com.girrafeec.avito_deezer.ui.screen.player.PlayerViewModel.Event.JumpToPrevTrackClicked
 import com.girrafeec.avito_deezer.ui.screen.player.PlayerViewModel.Event.PlaybackToggled
 import com.girrafeec.avito_deezer.ui.screen.player.PlayerViewModel.Event.ScreenOpened
+import com.girrafeec.avito_deezer.ui.screen.player.PlayerViewModel.SideEffect
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -23,7 +27,7 @@ import javax.inject.Inject
 class PlayerViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val interactor: PlayerInteractor,
-) : ViewModel() {
+) : ViewModel(), SideEffectManager<SideEffect> by SideEffectManagerImpl() {
 
     private val trackId: Long? = getTrackId()
     private val trackSource: TrackSource = getTrackSource()
@@ -98,6 +102,10 @@ class PlayerViewModel @Inject constructor(
         data object PlaybackToggled : Event
         data object JumpToNextTrackClicked : Event
         data object JumpToPrevTrackClicked : Event
+    }
+
+    sealed interface SideEffect {
+        data object LaunchBackgroundPlayback : SideEffect
     }
 
     companion object {

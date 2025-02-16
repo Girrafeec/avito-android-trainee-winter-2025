@@ -25,15 +25,19 @@ import com.girrafeec.avito_deezer.ui.screen.player.PlayerViewModel.Event
 import com.girrafeec.avito_deezer.ui.screen.player.PlayerViewModel.Event.JumpToNextTrackClicked
 import com.girrafeec.avito_deezer.ui.screen.player.PlayerViewModel.Event.JumpToPrevTrackClicked
 import com.girrafeec.avito_deezer.ui.screen.player.PlayerViewModel.Event.PlaybackToggled
+import com.girrafeec.avito_deezer.ui.screen.player.PlayerViewModel.SideEffect
 import com.girrafeec.avito_deezer.ui.screen.player.state.NoopPlayerState
 import com.girrafeec.avito_deezer.ui.screen.player.state.PlayerState
 import com.girrafeec.avito_deezer.ui.screen.player.state.rememberPlayerState
 import com.girrafeec.avito_deezer.ui.theme.AvitoDeezerTheme
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 import kotlin.time.Duration.Companion.seconds
 
 @Composable
 fun PlayerScreen(
     onHidePlayerClicked: () -> Unit,
+    onPlaybackStarted: () -> Unit,
 ) {
     val viewModel = hiltViewModel<PlayerViewModel>()
     val track by viewModel.trackFlow.collectAsStateWithLifecycle()
@@ -42,7 +46,9 @@ fun PlayerScreen(
     PlayerScreenContent(
         track = track,
         playerState = playerState,
+        sideEffects = viewModel.sideEffects,
         onHidePlayerClicked = onHidePlayerClicked,
+        onPlaybackStarted = onPlaybackStarted,
         onEvent = remember { { viewModel.onEvent(it) } }
     )
 }
@@ -51,11 +57,15 @@ fun PlayerScreen(
 fun PlayerScreenContent(
     track: Track?,
     playerState: PlayerState,
+    sideEffects: Flow<SideEffect>,
     onHidePlayerClicked: () -> Unit,
+    onPlaybackStarted: () -> Unit,
     onEvent: (Event) -> Unit,
 ) {
     PlayerScreenBehavior(
+        sideEffects = sideEffects,
         onHidePlayerClicked = onHidePlayerClicked,
+        onPlaybackStarted = onPlaybackStarted,
         onEvent = onEvent,
     )
 
@@ -101,8 +111,10 @@ fun PlayerScreenPreview() {
                 trackSource = TrackSource.LIBRARY,
             ),
             playerState = NoopPlayerState(),
+            sideEffects = emptyFlow(),
             onEvent = {},
             onHidePlayerClicked = {},
+            onPlaybackStarted = {},
         )
     }
 }

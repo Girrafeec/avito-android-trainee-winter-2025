@@ -15,6 +15,7 @@ import com.girrafeec.avito_deezer.ui.screen.tracks.online.OnlineTracksScreen
 fun AvitoDeezerNavigation(
     navController: NavHostController,
     startDestination: Destination<*>,
+    onPlaybackStarted: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     NavHost(
@@ -24,7 +25,7 @@ fun AvitoDeezerNavigation(
     ) {
         homeScreen(navController)
         libraryScreen(navController)
-        playerScreen(navController)
+        playerScreen(navController, onPlaybackStarted)
     }
 }
 
@@ -55,14 +56,18 @@ private fun NavGraphBuilder.libraryScreen(navController: NavHostController) {
     )
 }
 
-private fun NavGraphBuilder.playerScreen(navController: NavHostController) {
+private fun NavGraphBuilder.playerScreen(
+    navController: NavHostController,
+    onPlaybackStarted: () -> Unit
+) {
     composableDestination(
         destination = Destinations.PlayerDestination,
         content = {
             PlayerScreen(
                 onHidePlayerClicked = {
                     navController.popBackStack()
-                }
+                },
+                onPlaybackStarted = onPlaybackStarted
             )
         }
     )

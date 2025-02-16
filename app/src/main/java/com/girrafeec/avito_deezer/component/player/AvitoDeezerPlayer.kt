@@ -43,13 +43,10 @@ import kotlin.time.Duration.Companion.milliseconds
 @Singleton
 class AvitoDeezerPlayer @Inject constructor(
     @ApplicationContext
-    private val context: Context
+    private val context: Context,
+    private val exoPlayer: ExoPlayer,
 ) {
     private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
-
-    private val exoPlayer by lazy {
-        ExoPlayer.Builder(context).build()
-    }
 
     private val playerHandler = exoPlayer.getHandler()
     private val playerDispatcher = playerHandler.asCoroutineDispatcher()
