@@ -102,12 +102,12 @@ object TracksScreenComponents {
         onTrackClicked: (Track) -> Unit,
         modifier: Modifier = Modifier,
     ) {
-        val model = track.trackUrl ?: track.trackUri
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = modifier
                 .fillMaxWidth()
         ) {
+            val model = track.album.coverUrl ?: track.album.coverUri
             GlideImage(
                 model = model,
                 contentDescription = null,

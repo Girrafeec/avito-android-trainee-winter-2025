@@ -50,7 +50,7 @@ private fun TracksScreenContent(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 32.dp, vertical = 24.dp)
+            .padding(horizontal = 16.dp, vertical = 24.dp)
     ) {
         TracksSearchField(
             searchQuery = searchQuery,

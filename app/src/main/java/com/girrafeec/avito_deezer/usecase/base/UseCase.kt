@@ -1,4 +1,4 @@
-package com.girrafeec.avito_deezer.usecase
+package com.girrafeec.avito_deezer.usecase.base
 
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ensureActive

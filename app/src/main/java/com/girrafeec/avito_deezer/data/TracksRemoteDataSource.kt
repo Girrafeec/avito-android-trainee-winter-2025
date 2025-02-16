@@ -14,6 +14,7 @@ class TracksRemoteDataSource @Inject constructor(
     }
 
     override suspend fun searchTracks(searchQuery: String): List<Track> {
-        return TODO()
+        val tracksResponse = api.searchTracks(searchQuery)
+        return tracksResponse.toTracks()
     }
 }

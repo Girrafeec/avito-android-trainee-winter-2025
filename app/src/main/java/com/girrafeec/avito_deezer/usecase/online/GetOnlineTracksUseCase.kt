@@ -1,7 +1,8 @@
-package com.girrafeec.avito_deezer.usecase
+package com.girrafeec.avito_deezer.usecase.online
 
 import com.girrafeec.avito_deezer.data.TracksRepository
 import com.girrafeec.avito_deezer.domain.Track
+import com.girrafeec.avito_deezer.usecase.base.ParameterlessUseCase
 import kotlinx.coroutines.Dispatchers
 import javax.inject.Inject
 
