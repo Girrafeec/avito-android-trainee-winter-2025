@@ -27,6 +27,7 @@ import com.girrafeec.avito_deezer.ui.screen.player.PlayerViewModel.Event.JumpToP
 import com.girrafeec.avito_deezer.ui.screen.player.PlayerViewModel.Event.PlaybackToggled
 import com.girrafeec.avito_deezer.ui.screen.player.state.NoopPlayerState
 import com.girrafeec.avito_deezer.ui.screen.player.state.PlayerState
+import com.girrafeec.avito_deezer.ui.screen.player.state.rememberPlayerState
 import com.girrafeec.avito_deezer.ui.theme.AvitoDeezerTheme
 import kotlin.time.Duration.Companion.seconds
 
@@ -36,10 +37,11 @@ fun PlayerScreen(
 ) {
     val viewModel = hiltViewModel<PlayerViewModel>()
     val track by viewModel.trackFlow.collectAsStateWithLifecycle()
+    val playerState = rememberPlayerState(viewModel.playerStateValuesHolder)
 
     PlayerScreenContent(
         track = track,
-        playerState = NoopPlayerState(),
+        playerState = playerState,
         onHidePlayerClicked = onHidePlayerClicked,
         onEvent = remember { { viewModel.onEvent(it) } }
     )
@@ -73,7 +75,7 @@ fun PlayerScreenContent(
         PlaybackProgressSlider()
         Spacer(modifier = Modifier.height(64.dp))
         PlaybackControls(
-            isPlaying = true,
+            isPlaying = playerState.playbackState.isPlaying,
             onPlaybackToggled = { onEvent(PlaybackToggled) },
             onJumpToPrevTrackClicked = { onEvent(JumpToPrevTrackClicked) },
             onJumpToNextTrackClicked = { onEvent(JumpToNextTrackClicked) },

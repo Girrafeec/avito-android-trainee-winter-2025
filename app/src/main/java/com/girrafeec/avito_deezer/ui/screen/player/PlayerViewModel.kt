@@ -33,6 +33,8 @@ class PlayerViewModel @Inject constructor(
     private val _trackFlow = MutableStateFlow<Track?>(null)
     val trackFlow: StateFlow<Track?> = _trackFlow
 
+    val playerStateValuesHolder = interactor.playerStateValuesHolder
+
     init {
         collectTrackList()
     }
