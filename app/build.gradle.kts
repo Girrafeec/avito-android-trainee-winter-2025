@@ -94,4 +94,5 @@ dependencies {
     kapt(libs.dagger.hilt.compiler)
 
     implementation(libs.forasoft.android.utils.compose)
+    implementation(libs.forasoft.android.utils.clean)
 }

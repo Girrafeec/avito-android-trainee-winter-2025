@@ -10,12 +10,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import timber.log.Timber
@@ -29,6 +31,15 @@ class OnlineTracksViewModel @Inject constructor(
 
     val searchQuery: StateFlow<String> = savedStateHandle.getStateFlow(key = KEY_SEARCH_QUERY, initialValue = "")
 
+    private val onlineTracksFlow = combine(interactor.getOnlineTracks()) {
+        val result = it[0]
+        result.getOrDefault(emptyList())
+    }.stateIn(
+        scope = viewModelScope + Dispatchers.Default,
+        initialValue = emptyList(),
+        started = SharingStarted.WhileSubscribed(),
+    )
+
     private val _tracks = MutableStateFlow<List<Track>>(emptyList())
     val tracks = _tracks.asStateFlow()
 
@@ -37,6 +48,7 @@ class OnlineTracksViewModel @Inject constructor(
 
     init {
         loadTracks()
+        observeOnlineTracks()
         observeSearchQuery()
     }
 
@@ -57,10 +69,7 @@ class OnlineTracksViewModel @Inject constructor(
     override fun loadTracks() {
         if (loadTracksJob?.isActive == true) return
         loadTracksJob = viewModelScope.launch {
-            interactor.getOnlineTracks()
-                .onSuccess {
-                    _tracks.value = it
-                }
+            interactor.fetchOnlineTracks()
                 .onFailure {
                     Timber.tag(TAG).e(it)
                 }
@@ -82,16 +91,27 @@ class OnlineTracksViewModel @Inject constructor(
         }
     }
 
-    // TODO: [High] Reuse
+    // TODO: [Medium priority] Reuse
     @OptIn(FlowPreview::class)
     private fun observeSearchQuery() {
         searchQuery
-            .filterNot { it.isBlank() }
             .debounce(SEARCH_QUERY_TIMEOUT)
             .onEach { searchQuery ->
-                searchForTracks(searchQuery)
+                if (searchQuery.isBlank()) {
+                    _tracks.value = onlineTracksFlow.value
+                } else {
+                    searchForTracks(searchQuery)
+                }
             }
             .launchIn(viewModelScope + Dispatchers.IO)
+    }
+
+    private fun observeOnlineTracks() {
+        onlineTracksFlow
+            .onEach {
+                _tracks.value = it
+            }
+            .launchIn(viewModelScope + Dispatchers.Default)
     }
 
     companion object {

@@ -51,6 +51,7 @@ kotlinx-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-androi
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization-json" }
 glide-compose = { module = "com.github.bumptech.glide:compose", version.ref = "glide-compose" }
 forasoft-android-utils-compose = { module = "com.github.forasoft.android-utils:ui-compose", version.ref = "forasoft-android-utils" }
+forasoft-android-utils-clean = { module = "com.github.forasoft.android-utils:clean", version.ref = "forasoft-android-utils" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
