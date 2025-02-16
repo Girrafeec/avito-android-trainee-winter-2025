@@ -5,6 +5,7 @@ import javax.inject.Inject
 
 class TracksRepository @Inject constructor(
     private val remoteDataSource: TracksRemoteDataSource,
+    private val localDataSource: TracksLocalDataSource,
 ) {
     suspend fun getOnlineTracks(): List<Track> {
         return remoteDataSource.getTracks()
@@ -15,7 +16,7 @@ class TracksRepository @Inject constructor(
     }
 
     suspend fun getLibraryTracks(): List<Track> {
-        return TODO()
+        return localDataSource.getTracks()
     }
 
     suspend fun searchLibraryTracks(searchQuery: String): List<Track> {

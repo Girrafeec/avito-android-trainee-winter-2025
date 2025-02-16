@@ -5,6 +5,8 @@ import com.girrafeec.avito_deezer.domain.Artist
 import com.girrafeec.avito_deezer.domain.Track
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlin.time.DurationUnit
+import kotlin.time.toDuration
 
 @Serializable
 data class GetTrackChartResponse(
@@ -22,7 +24,7 @@ data class TracksData(
             Track(
                 id = it.id,
                 title = it.title,
-                duration = it.duration,
+                duration = it.duration.toDuration(DurationUnit.SECONDS),
                 trackUrl = it.previewUrl,
                 artist = it.artist.toArtist(),
                 album = it.album.toAlbum(),
@@ -40,7 +42,7 @@ data class TrackDto(
     val title: String,
 
     @SerialName("duration")
-    val duration: Int,
+    val duration: Long,
 
     @SerialName("preview")
     val previewUrl: String,
