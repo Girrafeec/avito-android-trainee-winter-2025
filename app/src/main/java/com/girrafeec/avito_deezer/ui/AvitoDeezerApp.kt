@@ -15,6 +15,7 @@ import com.girrafeec.avito_deezer.ui.theme.UiKitTheme
 fun AvitoDeezerApp(
     navController: NavHostController,
     startDestination: Destination<*>,
+    onPlaybackStarted: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -25,6 +26,7 @@ fun AvitoDeezerApp(
         AvitoDeezerNavigation(
             navController = navController,
             startDestination = startDestination,
+            onPlaybackStarted = onPlaybackStarted,
             modifier = Modifier.weight(1f)
         )
 

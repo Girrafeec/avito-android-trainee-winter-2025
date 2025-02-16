@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.girrafeec.avito_deezer.domain.Track
 import com.girrafeec.avito_deezer.ui.screen.tracks.common.BaseTracksViewModel
+import com.girrafeec.avito_deezer.ui.screen.tracks.common.BaseTracksViewModel.SideEffect.ShowPlayer
 import com.girrafeec.avito_deezer.usecase.online.SearchOnlineTracksUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -47,15 +48,12 @@ class OnlineTracksViewModel @Inject constructor(
     private var searchTracksJob: Job? = null
 
     init {
-        loadTracks()
         observeOnlineTracks()
         observeSearchQuery()
-    }
-
-    // TODO: [High] Implement Side Effects for it
-    override fun onScreenOpened() {
         loadTracks()
     }
+
+    override fun onScreenOpened() {}
 
     // TODO: [Medium priority] Add some validation
     override fun onSearchQueryEntered(searchQuery: String) {
@@ -63,7 +61,7 @@ class OnlineTracksViewModel @Inject constructor(
     }
 
     override fun onTrackClicked(track: Track) {
-        TODO("Not yet implemented")
+        emitSideEffect(ShowPlayer(track))
     }
 
     override fun loadTracks() {

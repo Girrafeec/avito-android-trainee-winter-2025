@@ -1,11 +1,14 @@
 package com.girrafeec.avito_deezer.component
 
+import android.content.ContentUris
 import android.content.Context
 import android.database.Cursor
+import android.net.Uri
 import android.provider.MediaStore
 import com.girrafeec.avito_deezer.domain.Album
 import com.girrafeec.avito_deezer.domain.Artist
 import com.girrafeec.avito_deezer.domain.Track
+import com.girrafeec.avito_deezer.domain.TrackSource
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import kotlin.time.DurationUnit
@@ -13,7 +16,7 @@ import kotlin.time.toDuration
 
 class AvitoDeezerContentResolver @Inject constructor(
     @ApplicationContext
-    context: Context
+    private val context: Context
 ) {
     private val contentResolver = checkNotNull(context.contentResolver) {
         "ContentResolver is null"
@@ -41,6 +44,28 @@ class AvitoDeezerContentResolver @Inject constructor(
         return cursor?.use { cursor ->
             extractTracks(cursor)
         } ?: emptyList()
+    }
+
+    fun getMusicFileUri(fileName: String): Uri? {
+        val projection = arrayOf(MediaStore.Audio.Media._ID)
+        val selection = "${MediaStore.Audio.Media.DATA} = ?"
+        val selectionArgs = arrayOf(fileName)
+
+        val cursor = contentResolver.query(
+            /* uri = */ MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+            /* projection = */ projection,
+            /* selection = */ selection,
+            /* selectionArgs = */ selectionArgs,
+            /* sortOrder = */ null,
+        )
+
+        cursor?.use {
+            if (it.moveToFirst()) {
+                val id = it.getLong(it.getColumnIndexOrThrow(MediaStore.Audio.Media._ID))
+                return ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, id)
+            }
+        }
+        return null
     }
 
     // TODO: [High] Add method to read album cover
@@ -71,7 +96,8 @@ class AvitoDeezerContentResolver @Inject constructor(
                 album = Album(
                     title = album,
                     coverUri = ""
-                )
+                ),
+                trackSource = TrackSource.LIBRARY,
             )
             tracks.add(track)
         }

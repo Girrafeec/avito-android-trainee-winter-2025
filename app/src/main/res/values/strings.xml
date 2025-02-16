@@ -8,6 +8,11 @@
     <!-- Tracks Screen -->
     <string name="screen_tracks_search_field_placeholder">Type to search tracks</string>
     <string name="screen_tracks_chart_title">Popular today</string>
+    <string name="screen_tracks_library_title">Recently saved</string>
     <string name="screen_tracks_search_result_title">Search result</string>
     <string name="screen_tracks_no_tracks_found_message">No track found</string>
+
+    <!-- Player Screen -->
+    <string name="screen_player_now_playing">Playing</string>
+    <string name="screen_player_unknown_artist">Unknown Artist</string>
 </resources>

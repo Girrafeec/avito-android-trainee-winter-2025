@@ -20,6 +20,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -80,7 +82,7 @@ object TracksScreenComponents {
         onTrackClicked: (Track) -> Unit,
         modifier: Modifier = Modifier,
     ) {
-        LazyColumn {
+        LazyColumn(modifier = modifier) {
             items(
                 items = tracks,
                 key = { track -> track.id }
@@ -94,7 +96,6 @@ object TracksScreenComponents {
         }
     }
 
-    // TODO: [High] Add click effect
     @OptIn(ExperimentalGlideComposeApi::class)
     @Composable
     private fun Track(
@@ -106,6 +107,7 @@ object TracksScreenComponents {
             verticalAlignment = Alignment.CenterVertically,
             modifier = modifier
                 .fillMaxWidth()
+                .clickable { onTrackClicked(track) }
         ) {
             val model = track.album.coverUrl ?: track.album.coverUri
             GlideImage(
@@ -113,14 +115,14 @@ object TracksScreenComponents {
                 contentDescription = null,
                 loading = placeholder(R.drawable.ic_disk),
                 failure = placeholder(R.drawable.ic_disk),
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .background(
                         color = UiKitTheme.colors.background.placeholder,
                         shape = RoundedCornerShape(4.dp)
                     )
+                    .clip(RoundedCornerShape(4.dp))
                     .size(56.dp)
-                    .padding(vertical = 8.dp, horizontal = 12.dp)
-                    .clickable { onTrackClicked(track) }
             )
             Spacer(modifier = Modifier.width(16.dp))
             Column(horizontalAlignment = Alignment.Start) {

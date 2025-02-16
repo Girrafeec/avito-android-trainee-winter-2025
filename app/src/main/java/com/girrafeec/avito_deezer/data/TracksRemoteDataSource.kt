@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 import javax.inject.Singleton
 
+// TODO: [Medium priority] Add paging
 @Singleton
 class TracksRemoteDataSource @Inject constructor(
     private val api: DeezerApi,
