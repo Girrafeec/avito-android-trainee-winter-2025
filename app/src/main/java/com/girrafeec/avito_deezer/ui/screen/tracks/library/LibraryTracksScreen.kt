@@ -10,6 +10,7 @@ import com.girrafeec.avito_deezer.domain.Track
 import com.girrafeec.avito_deezer.ui.screen.tracks.common.BaseTracksViewModel.Event
 import com.girrafeec.avito_deezer.ui.screen.tracks.common.TracksScreen
 import com.girrafeec.avito_deezer.ui.theme.AvitoDeezerTheme
+import kotlinx.coroutines.flow.emptyFlow
 
 @Composable
 fun LibraryTracksScreen() {
@@ -33,6 +34,8 @@ private fun LibraryTracksScreenContent(
     TracksScreen(
         searchQuery = searchQuery,
         tracks = tracks,
+        sideEffects = emptyFlow(),
+        onShowPlayer = {},
         onEvent = onEvent,
     )
 }

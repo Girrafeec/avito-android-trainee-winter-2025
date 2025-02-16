@@ -3,6 +3,7 @@ package com.girrafeec.avito_deezer.data.network
 import com.girrafeec.avito_deezer.domain.Album
 import com.girrafeec.avito_deezer.domain.Artist
 import com.girrafeec.avito_deezer.domain.Track
+import com.girrafeec.avito_deezer.domain.TrackSource
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlin.time.DurationUnit
@@ -28,6 +29,7 @@ data class TracksData(
                 trackUrl = it.previewUrl,
                 artist = it.artist.toArtist(),
                 album = it.album.toAlbum(),
+                trackSource = TrackSource.ONLINE,
             )
         }
     }

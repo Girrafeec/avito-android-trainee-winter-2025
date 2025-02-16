@@ -6,6 +6,7 @@ import android.provider.MediaStore
 import com.girrafeec.avito_deezer.domain.Album
 import com.girrafeec.avito_deezer.domain.Artist
 import com.girrafeec.avito_deezer.domain.Track
+import com.girrafeec.avito_deezer.domain.TrackSource
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import kotlin.time.DurationUnit
@@ -71,7 +72,8 @@ class AvitoDeezerContentResolver @Inject constructor(
                 album = Album(
                     title = album,
                     coverUri = ""
-                )
+                ),
+                trackSource = TrackSource.LIBRARY,
             )
             tracks.add(track)
         }

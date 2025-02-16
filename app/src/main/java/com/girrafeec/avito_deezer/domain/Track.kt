@@ -10,4 +10,10 @@ data class Track(
     val album: Album,
     val trackUri: String? = null,
     val trackUrl: String? = null,
+    val trackSource: TrackSource,
 )
+
+enum class TrackSource {
+    ONLINE,
+    LIBRARY,
+}

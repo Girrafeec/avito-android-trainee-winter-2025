@@ -15,13 +15,17 @@ import com.girrafeec.avito_deezer.R
 import com.girrafeec.avito_deezer.domain.Album
 import com.girrafeec.avito_deezer.domain.Artist
 import com.girrafeec.avito_deezer.domain.Track
+import com.girrafeec.avito_deezer.domain.TrackSource
 import com.girrafeec.avito_deezer.ui.screen.tracks.common.BaseTracksViewModel.Event
 import com.girrafeec.avito_deezer.ui.screen.tracks.common.BaseTracksViewModel.Event.OnSearchQueryEntered
 import com.girrafeec.avito_deezer.ui.screen.tracks.common.BaseTracksViewModel.Event.OnTrackClicked
+import com.girrafeec.avito_deezer.ui.screen.tracks.common.BaseTracksViewModel.SideEffect
 import com.girrafeec.avito_deezer.ui.screen.tracks.common.TracksScreenComponents.Tracks
 import com.girrafeec.avito_deezer.ui.screen.tracks.common.TracksScreenComponents.TracksSearchField
 import com.girrafeec.avito_deezer.ui.theme.AvitoDeezerTheme
 import com.girrafeec.avito_deezer.ui.theme.UiKitTheme
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 import kotlin.time.Duration.Companion.seconds
 
 // TODO: [High] Rename isLocal param
@@ -29,12 +33,16 @@ import kotlin.time.Duration.Companion.seconds
 fun TracksScreen(
     searchQuery: String,
     tracks: List<Track>,
+    sideEffects: Flow<SideEffect>,
     onEvent: (Event) -> Unit,
+    onShowPlayer: (Track) -> Unit,
     isLocal: Boolean = true,
 ) {
     TracksScreenContent(
         searchQuery = searchQuery,
         tracks = tracks,
+        sideEffects = sideEffects,
+        onShowPlayer = onShowPlayer,
         onEvent = onEvent,
         isLocal = isLocal,
     )
@@ -45,9 +53,17 @@ fun TracksScreen(
 private fun TracksScreenContent(
     searchQuery: String,
     tracks: List<Track>,
+    sideEffects: Flow<SideEffect>,
+    onShowPlayer: (Track) -> Unit,
     onEvent: (Event) -> Unit,
     isLocal: Boolean
 ) {
+    TrackScreenBehavior(
+        sideEffects = sideEffects,
+        onEvent = onEvent,
+        onShowPlayer = onShowPlayer,
+    )
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -79,7 +95,9 @@ private fun TracksScreenPreview() {
         TracksScreenContent(
             searchQuery = "",
             tracks = emptyList(),
+            sideEffects = emptyFlow(),
             onEvent = {},
+            onShowPlayer = {},
             isLocal = true
         )
     }
@@ -92,7 +110,9 @@ private fun TracksScreenQueryPreview() {
         TracksScreenContent(
             searchQuery = "AC/DC",
             tracks = emptyList(),
+            sideEffects = emptyFlow(),
             onEvent = {},
+            onShowPlayer = {},
             isLocal = true
         )
     }
@@ -115,6 +135,7 @@ private fun TracksScreenTrackListPreview() {
                     album = Album(
                         title = "Album 1"
                     ),
+                    trackSource = TrackSource.LIBRARY,
                 ),
                 Track(
                     id = 2,
@@ -126,6 +147,7 @@ private fun TracksScreenTrackListPreview() {
                     album = Album(
                         title = "Album 2"
                     ),
+                    trackSource = TrackSource.LIBRARY,
                 ),
                 Track(
                     id = 3,
@@ -137,9 +159,12 @@ private fun TracksScreenTrackListPreview() {
                     album = Album(
                         title = "Album 3"
                     ),
+                    trackSource = TrackSource.LIBRARY,
                 ),
             ),
+            sideEffects = emptyFlow(),
             onEvent = {},
+            onShowPlayer = {},
             isLocal = true
         )
     }

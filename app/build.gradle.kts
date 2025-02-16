@@ -88,6 +88,7 @@ dependencies {
     implementation(libs.okhttp.logging.interceptor)
     implementation(libs.glide.compose)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.media3.exoplayer)
 
     implementation(libs.dagger.hilt)
     implementation(libs.dagger.hilt.navigation.compose)

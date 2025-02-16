@@ -80,7 +80,7 @@ object TracksScreenComponents {
         onTrackClicked: (Track) -> Unit,
         modifier: Modifier = Modifier,
     ) {
-        LazyColumn {
+        LazyColumn(modifier = modifier) {
             items(
                 items = tracks,
                 key = { track -> track.id }
@@ -106,6 +106,7 @@ object TracksScreenComponents {
             verticalAlignment = Alignment.CenterVertically,
             modifier = modifier
                 .fillMaxWidth()
+                .clickable { onTrackClicked(track) }
         ) {
             val model = track.album.coverUrl ?: track.album.coverUri
             GlideImage(
@@ -120,7 +121,6 @@ object TracksScreenComponents {
                     )
                     .size(56.dp)
                     .padding(vertical = 8.dp, horizontal = 12.dp)
-                    .clickable { onTrackClicked(track) }
             )
             Spacer(modifier = Modifier.width(16.dp))
             Column(horizontalAlignment = Alignment.Start) {
