@@ -84,6 +84,7 @@ object PlayerScreenComponents {
                         color = UiKitTheme.colors.background.placeholder,
                         shape = RoundedCornerShape(16.dp)
                     )
+                    .clip(RoundedCornerShape(16.dp))
                     .size(202.dp)
             )
             Spacer(modifier = Modifier.height(56.dp))
