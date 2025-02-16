@@ -15,11 +15,13 @@ object Colors {
     val Gray50 = GrayMain.copy(alpha = 0.05f)
 
     val WhiteMain = Color(0xFFFFFFFF)
+
+    val PurpleMain = Color(0xFFCB8AE5)
 }
 
 val LightColorScheme = lightColorScheme(
     primary = Colors.WhiteMain,
-    onPrimary = Colors.GrayMain,
+    onPrimary = Colors.PurpleMain,
     tertiary = Colors.Gray600
 )
 
@@ -53,6 +55,8 @@ data class UiKitColors(
     data class Icon(
         val primary: Color = Colors.GrayMain,
         val placeholder: Color = Colors.Gray400,
+        val accent: Color = Colors.PurpleMain,
+        val unselected: Color = Colors.Gray400
     )
 }
 
