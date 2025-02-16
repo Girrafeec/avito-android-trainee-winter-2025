@@ -58,12 +58,11 @@ class LibraryTracksViewModel @Inject constructor(
     init {
         observeLibraryTracks()
         observeSearchQuery()
+        if (isMediaAudioPermissionGranted()) loadTracks()
     }
 
     override fun onScreenOpened() {
-        if (isMediaAudioPermissionGranted()) {
-            loadTracks()
-        } else {
+        if (!isMediaAudioPermissionGranted()) {
             emitSideEffect(SideEffect.ShowMediaAudioPermission)
         }
     }
@@ -132,7 +131,7 @@ class LibraryTracksViewModel @Inject constructor(
 
     companion object {
         private const val KEY_SEARCH_QUERY = "search_query"
-        private const val TAG = "OnlineTracksViewModel"
+        private const val TAG = "LibraryTracksViewModel"
 
         private const val SEARCH_QUERY_TIMEOUT = 1000L
     }

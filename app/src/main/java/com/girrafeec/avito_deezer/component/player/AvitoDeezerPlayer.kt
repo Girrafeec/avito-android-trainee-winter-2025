@@ -171,6 +171,10 @@ class AvitoDeezerPlayer @Inject constructor(
         if (isPlaybackCompleted) {
             seekToStart()
         }
+        if (isPlaying.value) {
+            pause()
+            seekToStart()
+        }
         playerScope.launch {
             exoPlayer.play()
         }

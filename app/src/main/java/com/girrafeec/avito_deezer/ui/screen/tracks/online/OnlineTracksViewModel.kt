@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
@@ -50,11 +51,10 @@ class OnlineTracksViewModel @Inject constructor(
     init {
         observeOnlineTracks()
         observeSearchQuery()
-    }
-
-    override fun onScreenOpened() {
         loadTracks()
     }
+
+    override fun onScreenOpened() {}
 
     // TODO: [Medium priority] Add some validation
     override fun onSearchQueryEntered(searchQuery: String) {
