@@ -1,18 +1,17 @@
-package com.girrafeec.avito_deezer.usecase.online
+package com.girrafeec.avito_deezer.usecase.library
 
 import com.forasoft.androidutils.clean.usecase.UseCase
 import com.girrafeec.avito_deezer.data.TracksRepository
 import com.girrafeec.avito_deezer.domain.Track
-import com.girrafeec.avito_deezer.usecase.online.SearchOnlineTracksUseCase.Params
 import kotlinx.coroutines.Dispatchers
 import javax.inject.Inject
 
-class SearchOnlineTracksUseCase @Inject constructor(
+class SearchLibraryTracksUseCase @Inject constructor(
     private val repository: TracksRepository,
-) : UseCase<Params, List<Track>>(Dispatchers.IO) {
+) : UseCase<SearchLibraryTracksUseCase.Params, List<Track>>(Dispatchers.IO) {
 
     override suspend fun execute(params: Params): List<Track> {
-        return repository.searchOnlineTracks(searchQuery = params.searchQuery)
+        return repository.searchLibraryTracks(searchQuery = params.searchQuery)
     }
 
     data class Params(val searchQuery: String)

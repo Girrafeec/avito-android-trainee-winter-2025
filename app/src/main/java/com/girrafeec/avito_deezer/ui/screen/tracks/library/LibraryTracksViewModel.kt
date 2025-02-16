@@ -1,10 +1,10 @@
-package com.girrafeec.avito_deezer.ui.screen.tracks.online
+package com.girrafeec.avito_deezer.ui.screen.tracks.library
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.girrafeec.avito_deezer.domain.Track
 import com.girrafeec.avito_deezer.ui.screen.tracks.common.BaseTracksViewModel
-import com.girrafeec.avito_deezer.usecase.online.SearchOnlineTracksUseCase
+import com.girrafeec.avito_deezer.usecase.library.SearchLibraryTracksUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
@@ -24,14 +24,14 @@ import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
-class OnlineTracksViewModel @Inject constructor(
+class LibraryTracksViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
-    private val interactor: OnlineTracksInteractor,
+    private val interactor: LibraryTracksInteractor,
 ) : BaseTracksViewModel() {
 
     val searchQuery: StateFlow<String> = savedStateHandle.getStateFlow(key = KEY_SEARCH_QUERY, initialValue = "")
 
-    private val onlineTracksFlow = combine(interactor.getOnlineTracks()) {
+    private val libraryTracksFlow = combine(interactor.getLibraryTracks()) {
         val result = it[0]
         result.getOrDefault(emptyList())
     }.stateIn(
@@ -48,7 +48,7 @@ class OnlineTracksViewModel @Inject constructor(
 
     init {
         loadTracks()
-        observeOnlineTracks()
+        observeLibraryTracks()
         observeSearchQuery()
     }
 
@@ -69,7 +69,7 @@ class OnlineTracksViewModel @Inject constructor(
     override fun loadTracks() {
         if (loadTracksJob?.isActive == true) return
         loadTracksJob = viewModelScope.launch {
-            interactor.fetchOnlineTracks()
+            interactor.fetchLibraryTracks()
                 .onFailure {
                     Timber.tag(TAG).e(it)
                 }
@@ -80,8 +80,8 @@ class OnlineTracksViewModel @Inject constructor(
         if (searchTracksJob?.isActive == true) return
         searchTracksJob = viewModelScope.launch {
             _tracks.value = emptyList()
-            val params = SearchOnlineTracksUseCase.Params(searchQuery = searchQuery)
-            interactor.searchOnlineTracks(params)
+            val params = SearchLibraryTracksUseCase.Params(searchQuery = searchQuery)
+            interactor.searchLibraryTracks(params)
                 .onSuccess {
                     _tracks.value = it
                 }
@@ -91,14 +91,14 @@ class OnlineTracksViewModel @Inject constructor(
         }
     }
 
-    // TODO: [Medium priority] Reuse
+    // TODO: [High] Reuse
     @OptIn(FlowPreview::class)
     private fun observeSearchQuery() {
         searchQuery
             .debounce(SEARCH_QUERY_TIMEOUT)
             .onEach { searchQuery ->
                 if (searchQuery.isBlank()) {
-                    _tracks.value = onlineTracksFlow.value
+                    _tracks.value = libraryTracksFlow.value
                 } else {
                     searchForTracks(searchQuery)
                 }
@@ -106,8 +106,8 @@ class OnlineTracksViewModel @Inject constructor(
             .launchIn(viewModelScope + Dispatchers.IO)
     }
 
-    private fun observeOnlineTracks() {
-        onlineTracksFlow
+    private fun observeLibraryTracks() {
+        libraryTracksFlow
             .onEach {
                 _tracks.value = it
             }

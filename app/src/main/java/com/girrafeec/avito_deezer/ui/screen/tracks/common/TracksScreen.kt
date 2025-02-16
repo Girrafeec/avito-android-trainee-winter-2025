@@ -22,6 +22,7 @@ import com.girrafeec.avito_deezer.ui.screen.tracks.common.TracksScreenComponents
 import com.girrafeec.avito_deezer.ui.screen.tracks.common.TracksScreenComponents.TracksSearchField
 import com.girrafeec.avito_deezer.ui.theme.AvitoDeezerTheme
 import com.girrafeec.avito_deezer.ui.theme.UiKitTheme
+import kotlin.time.Duration.Companion.seconds
 
 // TODO: [High] Rename isLocal param
 @Composable
@@ -50,7 +51,7 @@ private fun TracksScreenContent(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 16.dp, vertical = 24.dp)
+            .padding(end = 16.dp, start = 16.dp, top = 24.dp, bottom = 4.dp)
     ) {
         TracksSearchField(
             searchQuery = searchQuery,
@@ -107,7 +108,7 @@ private fun TracksScreenTrackListPreview() {
                 Track(
                     id = 1,
                     title = "Song 1",
-                    duration = 134,
+                    duration = 134.seconds,
                     artist = Artist(
                         name = "Artist 1"
                     ),
@@ -118,7 +119,7 @@ private fun TracksScreenTrackListPreview() {
                 Track(
                     id = 2,
                     title = "Song 2",
-                    duration = 169,
+                    duration = 169.seconds,
                     artist = Artist(
                         name = "Artist 2"
                     ),
@@ -129,7 +130,7 @@ private fun TracksScreenTrackListPreview() {
                 Track(
                     id = 3,
                     title = "Song 3",
-                    duration = 178,
+                    duration = 178.seconds,
                     artist = Artist(
                         name = "Artist 3"
                     ),
