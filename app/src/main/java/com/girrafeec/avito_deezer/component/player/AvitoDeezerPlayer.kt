@@ -3,17 +3,19 @@ package com.girrafeec.avito_deezer.component.player
 import android.content.Context
 import android.net.Uri
 import android.os.Handler
-import androidx.core.content.FileProvider
+import android.os.SystemClock
 import androidx.core.net.toUri
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
+import com.girrafeec.avito_deezer.component.AvitoDeezerContentResolver
 import com.girrafeec.avito_deezer.domain.PlaybackState
 import com.girrafeec.avito_deezer.domain.TrackSource
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.android.asCoroutineDispatcher
 import kotlinx.coroutines.channels.awaitClose
@@ -33,7 +35,6 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import timber.log.Timber
-import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.math.roundToLong
@@ -45,15 +46,13 @@ class AvitoDeezerPlayer @Inject constructor(
     @ApplicationContext
     private val context: Context,
     private val exoPlayer: ExoPlayer,
+    private val contentResolver: AvitoDeezerContentResolver,
 ) {
     private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
     private val playerHandler = exoPlayer.getHandler()
     private val playerDispatcher = playerHandler.asCoroutineDispatcher()
     private val playerScope = CoroutineScope(playerDispatcher)
-
-    private val _currentPlayerPositionMillis = MutableStateFlow(0L)
-    private val playerPositionMillis = _currentPlayerPositionMillis.asStateFlow()
 
     private val isPlaying: StateFlow<Boolean> = callbackFlow {
         send(exoPlayer.isPlaying)
@@ -139,7 +138,7 @@ class AvitoDeezerPlayer @Inject constructor(
     val playbackPositionMillis: StateFlow<Long> = _playbackPositionMillis.asStateFlow()
 
     val playbackProgress = combine(
-        playerPositionMillis,
+        playbackPositionMillis,
         duration,
     ) { playerPositionMillis, duration ->
         getPlaybackProgress(playerPositionMillis, duration)
@@ -204,33 +203,31 @@ class AvitoDeezerPlayer @Inject constructor(
         val uri = when (source.source) {
             TrackSource.ONLINE -> source.uri.toUri()
             TrackSource.LIBRARY -> createUriFromFilePath(source.uri)
-        }
+        } ?: error("uri does not exist")
         return MediaItem.fromUri(uri)
     }
 
-    private fun createUriFromFilePath(path: String): Uri {
-        val file = File(path)
-        return FileProvider.getUriForFile(context, "${context.packageName}.provider", file)
+    private fun createUriFromFilePath(path: String): Uri? {
+        return contentResolver.getMusicFileUri(path)
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     private fun setUpPositionTracking() {
-        isPlaying
-            .transformLatest<Boolean, Unit> { isPlaying ->
-                if (isPlaying) {
+        playbackState
+            .transformLatest<PlaybackState, Unit> { playbackState ->
+                if (playbackState.isPlaying) {
                     while (currentCoroutineContext().isActive) {
-                        updatePosition()
+                        val startTimestampMillis = SystemClock.elapsedRealtime()
                         delay(PROGRESS_POLLING_DELAY)
+                        val elapsedTimeMillis =
+                            SystemClock.elapsedRealtime() - startTimestampMillis
+                        val newPlaybackPositionMillis =
+                            playbackPositionMillis.value + elapsedTimeMillis
+                        updatePlaybackPosition(newPlaybackPositionMillis)
                     }
                 }
             }
             .launchIn(coroutineScope + Dispatchers.Default)
-    }
-
-    private fun updatePosition() {
-        playerHandler.post {
-            val positionMillis = exoPlayer.currentPosition.coerceAtLeast(0L)
-            _currentPlayerPositionMillis.value = positionMillis
-        }
     }
 
     private fun seekToStart() {
@@ -255,7 +252,7 @@ class AvitoDeezerPlayer @Inject constructor(
         }
     }
 
-    fun getPlaybackProgress(
+    private fun getPlaybackProgress(
         playbackPositionMillis: Long,
         duration: Duration,
     ): Float {

@@ -54,7 +54,16 @@ private fun NavGraphBuilder.libraryScreen(navController: NavHostController) {
     composableDestination(
         destination = Destinations.LibraryDestination,
         content = {
-            LibraryTracksScreen()
+            LibraryTracksScreen(
+                onShowPlayer = { track ->
+                    val args = Destinations.PlayerDestination.Args(
+                        trackId = track.id,
+                        trackSource = track.trackSource,
+                    )
+                    val route = Destinations.PlayerDestination.createRoute(args)
+                    navController.navigate(route)
+                }
+            )
         }
     )
 }

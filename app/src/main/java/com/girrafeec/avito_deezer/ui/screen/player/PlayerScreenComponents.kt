@@ -38,7 +38,6 @@ import com.girrafeec.avito_deezer.ui.screen.player.state.PlayerState
 import com.girrafeec.avito_deezer.ui.theme.UiKitTheme
 import com.girrafeec.avito_deezer.util.DateTime
 import com.girrafeec.avito_deezer.util.optional
-import timber.log.Timber
 import kotlin.time.Duration.Companion.milliseconds
 
 object PlayerScreenComponents {
@@ -131,7 +130,6 @@ object PlayerScreenComponents {
         playerState: PlayerState,
         onSeek: (Float) -> Unit,
     ) {
-        Timber.tag("SliderIssue").v("progress: ${playerState.playbackProgress}")
         AvitoDeezerSlider(
             value = playerState.playbackProgress,
             onValueChanged = onSeek,
