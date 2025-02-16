@@ -8,11 +8,13 @@ import com.girrafeec.avito_deezer.domain.TrackSource
 import com.girrafeec.avito_deezer.ui.navigation.Destinations.PlayerDestination.KeyTrackId
 import com.girrafeec.avito_deezer.ui.navigation.Destinations.PlayerDestination.KeyTrackSource
 import com.girrafeec.avito_deezer.ui.navigation.Destinations.PlayerDestination.TrackIdDefaultValue
-import com.girrafeec.avito_deezer.ui.screen.player.PlayerViewModel.Event.NextTrackClicked
+import com.girrafeec.avito_deezer.ui.screen.player.PlayerViewModel.Event.JumpToNextTrackClicked
+import com.girrafeec.avito_deezer.ui.screen.player.PlayerViewModel.Event.JumpToPrevTrackClicked
 import com.girrafeec.avito_deezer.ui.screen.player.PlayerViewModel.Event.PlaybackToggled
-import com.girrafeec.avito_deezer.ui.screen.player.PlayerViewModel.Event.PreviousTrackClicked
 import com.girrafeec.avito_deezer.ui.screen.player.PlayerViewModel.Event.ScreenOpened
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -28,8 +30,10 @@ class PlayerViewModel @Inject constructor(
 
     private var currentTrackList: List<Track> = emptyList()
 
+    private val _trackFlow = MutableStateFlow<Track?>(null)
+    val trackFlow: StateFlow<Track?> = _trackFlow
+
     init {
-        Timber.tag(TAG).v("trackId: $trackId")
         collectTrackList()
     }
 
@@ -38,8 +42,8 @@ class PlayerViewModel @Inject constructor(
         when (event) {
             ScreenOpened -> onScreenOpened()
             PlaybackToggled -> onPlaybackToggled()
-            NextTrackClicked -> onNextTrackClicked()
-            PreviousTrackClicked -> onPreviousTrackClicked()
+            JumpToNextTrackClicked -> onJumpToNextTrackClicked()
+            JumpToPrevTrackClicked -> onJumpToPrevTrackClicked()
         }
     }
 
@@ -51,11 +55,11 @@ class PlayerViewModel @Inject constructor(
 
     }
 
-    private fun onNextTrackClicked() {
+    private fun onJumpToNextTrackClicked() {
 
     }
 
-    private fun onPreviousTrackClicked() {
+    private fun onJumpToPrevTrackClicked() {
 
     }
 
@@ -63,14 +67,14 @@ class PlayerViewModel @Inject constructor(
         viewModelScope.launch {
             interactor.onlineTracksFlow.collect { tracks ->
                 if (trackSource == TrackSource.ONLINE) currentTrackList = tracks
-                Timber.tag(TAG).v("tracks: $currentTrackList")
+                _trackFlow.value = currentTrackList.find { it.id == trackId }
             }
         }
 
         viewModelScope.launch {
             interactor.libraryTracksFlow.collect { tracks ->
                 if (trackSource == TrackSource.LIBRARY) currentTrackList = tracks
-                Timber.tag(TAG).v("tracks: $currentTrackList")
+                _trackFlow.value = currentTrackList.find { it.id == trackId }
             }
         }
     }
@@ -90,8 +94,8 @@ class PlayerViewModel @Inject constructor(
     sealed interface Event {
         data object ScreenOpened : Event
         data object PlaybackToggled : Event
-        data object NextTrackClicked : Event
-        data object PreviousTrackClicked : Event
+        data object JumpToNextTrackClicked : Event
+        data object JumpToPrevTrackClicked : Event
     }
 
     companion object {
