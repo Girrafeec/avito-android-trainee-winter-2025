@@ -1,5 +1,8 @@
 package com.girrafeec.avito_deezer.ui.navigation
 
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraphBuilder
@@ -68,6 +71,18 @@ private fun NavGraphBuilder.playerScreen(
                     navController.popBackStack()
                 },
                 onPlaybackStarted = onPlaybackStarted
+            )
+        },
+        enterTransition = {
+            slideInVertically(
+                initialOffsetY = { it },
+                animationSpec = tween(durationMillis = 300)
+            )
+        },
+        exitTransition = {
+            slideOutVertically(
+                targetOffsetY = { it },
+                animationSpec = tween(durationMillis = 300)
             )
         }
     )

@@ -94,7 +94,6 @@ object TracksScreenComponents {
         }
     }
 
-    // TODO: [High] Add click effect
     @OptIn(ExperimentalGlideComposeApi::class)
     @Composable
     private fun Track(

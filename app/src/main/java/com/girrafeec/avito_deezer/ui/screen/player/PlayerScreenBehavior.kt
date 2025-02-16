@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.Lifecycle
 import com.forasoft.androidutils.ui.compose.effect.LifecycleEventObserver
+import com.girrafeec.avito_deezer.ui.bottombar.ForcedBottomBarBehavior
 import com.girrafeec.avito_deezer.ui.screen.player.PlayerViewModel.Event
 import com.girrafeec.avito_deezer.ui.screen.player.PlayerViewModel.Event.ScreenOpened
 import com.girrafeec.avito_deezer.ui.screen.player.PlayerViewModel.SideEffect
@@ -17,6 +18,8 @@ fun PlayerScreenBehavior(
     onHidePlayerClicked: () -> Unit,
     onPlaybackStarted: () -> Unit,
 ) {
+    ForcedBottomBarBehavior(isVisible = false)
+
     LifecycleEventObserver { _, event ->
         when (event) {
             Lifecycle.Event.ON_START -> onEvent(ScreenOpened)

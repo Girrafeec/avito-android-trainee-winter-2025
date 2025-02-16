@@ -53,7 +53,7 @@ class AvitoDeezerPlayer @Inject constructor(
     private val playerScope = CoroutineScope(playerDispatcher)
 
     private val _currentPlayerPositionMillis = MutableStateFlow(0L)
-    private val currentPlayerPositionMillis = _currentPlayerPositionMillis.asStateFlow()
+    private val playerPositionMillis = _currentPlayerPositionMillis.asStateFlow()
 
     private val isPlaying: StateFlow<Boolean> = callbackFlow {
         send(exoPlayer.isPlaying)
@@ -139,15 +139,10 @@ class AvitoDeezerPlayer @Inject constructor(
     val playbackPositionMillis: StateFlow<Long> = _playbackPositionMillis.asStateFlow()
 
     val playbackProgress = combine(
-        currentPlayerPositionMillis,
+        playerPositionMillis,
         duration,
     ) { playerPositionMillis, duration ->
-        val durationMillis = duration.inWholeMilliseconds.coerceAtLeast(0L)
-        if (durationMillis != 0L) {
-            (playerPositionMillis / 1000).toFloat()
-        } else {
-            0f
-        }
+        getPlaybackProgress(playerPositionMillis, duration)
     }.stateIn(
         scope = coroutineScope,
         started = SharingStarted.WhileSubscribed(),
@@ -257,6 +252,17 @@ class AvitoDeezerPlayer @Inject constructor(
             val coercedPositionMillis = positionMillis.coerceIn(0L, durationMillis)
             exoPlayer.seekTo(coercedPositionMillis)
             updatePlaybackPosition(positionMillis)
+        }
+    }
+
+    fun getPlaybackProgress(
+        playbackPositionMillis: Long,
+        duration: Duration,
+    ): Float {
+        return if (duration > Duration.ZERO) {
+            playbackPositionMillis.toFloat() / duration.inWholeMilliseconds
+        } else {
+            0f
         }
     }
 

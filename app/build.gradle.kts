@@ -99,4 +99,5 @@ dependencies {
 
     implementation(libs.forasoft.android.utils.compose)
     implementation(libs.forasoft.android.utils.clean)
+    implementation(libs.forasoft.android.utils.coroutines)
 }
